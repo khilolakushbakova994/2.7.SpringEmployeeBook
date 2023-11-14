@@ -7,24 +7,24 @@ import java.util.*;
 @Service
 
 public class EmployeeServiceImpl implements EmployeeService {
-    private Map<String , String> employeeList;
-    public EmployeeServiceImpl(){this.employeeList= new HashMap <>();}
+    private final Map<String , Employee> employees;
+    public EmployeeServiceImpl(){this.employees= new HashMap <>();}
 
     @Override
     public Employee addEmployee(String firstName, String lastName) {
         Employee employee = new Employee(firstName, lastName);
-        if (employeeList.containsKey(employee)) {
+        if (employees.containsKey(employee.getFullName())) {
             throw new EmployeeAlreadyAddedException("уже есть такой сотрудник");
         }
-        employeeList.put(firstName, lastName);
+        employees.put(employee.getFullName(), employee);
         return employee;
     }
     @Override
     public Employee removeEmployee(String firstName, String lastName) {
         Employee employee = new Employee( firstName, lastName);
-        if (employeeList.containsKey(employee)) {
-            employeeList.remove(employee);
-            return employee;
+        if (employees.containsKey(employee.getFullName())) {
+           return employees.remove(employee.getFullName());
+
         }
         throw new EmployeeNotFoundException("Такого сотрудника нет в списке");
     }
@@ -33,16 +33,16 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee searchEmployee(String firstName, String lastName) {
         Employee employee = new Employee(firstName, lastName);
 
-        if (employeeList.containsKey(employee)) {
-            return employee;
+        if (employees.containsKey(employee.getFullName())) {
+            return employees.get(employee.getFullName());
         }
         throw new EmployeeNotFoundException("Такого сотрудника нет в списке");
     }
 
     @Override
-    public Map<String, String> showAllEmployeeList() {
+    public Collection<Employee> showAllEmployeeList() {
 
-        return employeeList;
+        return Collections.unmodifiableCollection(employees.values());
     }
     }
 
